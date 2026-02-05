@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Valentine Surprise</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #fbe8f0; /* Light pastel background */
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .container {
+    position: relative;
+    text-align: center;
+  }
+
+  /* Envelope styles */
+  .envelope {
+    width: 200px;
+    height: 150px;
+    background: #ffd1dc;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+  }
+
+  /* Envelope flap (optional) for visual effect */
+  .flap {
+    position: absolute;
+    top: -20px;
+    width: 200px;
+    height: 20px;
+    background: #ffd1dc;
+    border-radius: 50% 50% 0 0;
+    transition: all 0.3s ease;
+  }
+
+  /* Card styles (hidden initially) */
+  .card {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    width: 300px;
+    padding: 20px;
+    background: #fff0f5;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+    text-align: center;
+  }
+
+  /* Show card when active */
+  .card.show {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+
+  /* Buttons styles */
+  .buttons {
+    margin-top: 20px;
+  }
+
+  button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s ease;
+  }
+
+  .yes-btn {
+    background-color: #ff69b4;
+    color: white;
+  }
+
+  .no-btn {
+    background-color: #ffe4e1;
+    color: #555;
+    position: relative;
+  }
+
+  /* Confetti / hearts container */
+  #confettiContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  /* Photo to reveal (hidden initially) */
+  #surprisePhoto {
+    display: none;
+    margin-top: 20px;
+    max-width: 80%;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Envelope -->
+  <div class="envelope" id="envelope">
+    <div class="flap"></div>
+    Open me
+  </div>
+
+  <!-- Card -->
+  <div class="card" id="card">
+    <p>Will you be my virtual Valentine?</p>
+    <div class="buttons">
+      <button class="yes-btn" id="yesBtn">Yes</button>
+      <button class="no-btn" id="noBtn">No</button>
+    </div>
+  </div>
+
+  <!-- Confetti / Hearts container -->
+  <div id="confettiContainer"></div>
+
+  <!-- Surprise Photo -->
+  <img id="surprisePhoto" src="https://images.unsplash.com/photo-1549924231-f129b911e442?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Surprise" />
+</div>
+
+<script>
+  const envelope = document.getElementById('envelope');
+  const card = document.getElementById('card');
+  const noBtn = document.getElementById('noBtn');
+  const yesBtn = document.getElementById('yesBtn');
+  const surprisePhoto = document.getElementById('surprisePhoto');
+  const confettiContainer = document.getElementById('confettiContainer');
+
+  // Open envelope on click
+  envelope.addEventListener('click', () => {
+    // Animate envelope opening
+    envelope.style.transform = 'rotateX(90deg)';
+    // Show the card after animation
+    setTimeout(() => {
+      card.classList.add('show');
+    }, 500);
+  });
+
+  // Make No button move away
+  noBtn.addEventListener('mouseenter', () => {
+    moveAway(noBtn);
+  });
+  noBtn.addEventListener('click', () => {
+    moveAway(noBtn);
+  });
+
+  function moveAway(button) {
+    const rect = button.getBoundingClientRect();
+    const containerRect = document.body.getBoundingClientRect();
+    const maxX = containerRect.width - rect.width;
+    const maxY = containerRect.height - rect.height;
+
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
+
+    button.style.position = 'absolute';
+    button.style.left = newX + 'px';
+    button.style.top = newY + 'px';
+  }
+
+  // Handle Yes button click
+  yesBtn.addEventListener('click', () => {
+    // Hide the card
+    card.style.transition = 'opacity 0.5s ease';
+    card.style.opacity = 0;
+
+    // After hiding, trigger celebration
+    setTimeout(() => {
+      showCelebration();
+    }, 500);
+  });
+
+  function showCelebration() {
+    // Generate confetti / hearts
+    for (let i = 0; i < 100; i++) {
+      createHeart();
+    }
+
+    // Show the photo after some delay
+    setTimeout(() => {
+      document.getElementById('surprisePhoto').style.display = 'block';
+    }, 2000);
+  }
+
+  function createHeart() {
+    const heart = document.createElement('div');
+    heart.innerHTML = '💖'; // or use SVG for more elaborate hearts
+    heart.style.position = 'absolute';
+    heart.style.left = Math.random() * 100 + '%';
+    heart.style.top = '100%';
+    heart.style.fontSize = (10 + Math.random() * 20) + 'px';
+    heart.style.opacity = 1;
+    heart.style.transform = `translateY(0)`;
+    confettiContainer.appendChild(heart);
+
+    // Animate hearts falling
+    const fallDuration = 3000 + Math.random() * 2000;
+    heart.animate([
+      { transform: 'translateY(0)', opacity: 1 },
+      { transform: `translateY(-150%)`, opacity: 0 }
+    ], {
+      duration: fallDuration,
+      easing: 'ease-in'
+    }).onfinish = () => {
+      heart.remove();
+    };
+  }
+</script>
+
+</body>
+</html>
